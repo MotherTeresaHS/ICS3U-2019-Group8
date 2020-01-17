@@ -140,48 +140,166 @@ def game_splash_scene():
     # this function is the game scene
 
     # repeat forever, game loop
+    image_bank_2 = stage.Bank.from_bmp16("mt_game_studio.bmp")
+    # sets the background to image 0 in the bank
+    background = stage.Grid(image_bank_2, constants.SCREEN_GRID_X, constants.SCREEN_GRID_Y)
+    text = []
+    text1 = stage.Text(width=29, height=14, font=None, palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1.move(60, 10)
+    text1.text("Pong")
+    text.append(text1)
+
+    text2 = stage.Text(width=29, height=14, font=None, palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text2.move(35, 110)
+    text2.text("Mariam Hemdan")
+    text.append(text2)
+
+    # create a stage for the background to show up on
+    #   and set the frame rate to 60fps
+    game = stage.Stage(ugame.display, 60)
+    # set the layers, items show up in order
+    game.layers = text + [background]
+    # render the background and inital location of sprite list
+    # most likely you will only render background once per scene
+    game.render_block()
     while True:
         # get user input
 
         # update game logic
 
+        # Wait for 1 seconds
+        time.sleep(1.0)
+        main_menu_scene()
+
         # redraw sprite list
-        pass # just a placeholder until you write the code
+
+    pass # just a placeholder until you write the code
 
 
 def main_menu_scene():
     # this function is the game scene
 
     # repeat forever, game loop
+    # repeat forever, game loop
+    image_bank_2 = stage.Bank.from_bmp16("mt_game_studio.bmp")
+    # sets the background to image 0 in the bank
+    background = stage.Grid(image_bank_2, constants.SCREEN_GRID_X, constants.SCREEN_GRID_Y)
+    text = []
+    text1 = stage.Text(width=29, height=14, font=None, palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1.move(60, 10)
+    text1.text("Pong")
+    text.append(text1)
+
+    text2 = stage.Text(width=29, height=14, font=None, palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text2.move(35, 110)
+    text2.text("PRESS START")
+    text.append(text2)
+    # create a stage for the background to show up on
+    #   and set the frame rate to 60fps
+    game = stage.Stage(ugame.display, 60)
+    # set the layers, items show up in order
+    game.layers = text + [background]
+    # render the background and inital location of sprite list
+    # most likely you will only render background once per scene
+    game.render_block()
     while True:
         # get user input
 
         # update game logic
 
+        # Wait for 1 seconds
+        time.sleep(1.0)
+        game_scene()
         # redraw sprite list
+
         pass # just a placeholder until you write the code
 
 
 def game_scene():
     # this function is the game scene
-
     # repeat forever, game loop
+    # repeat forever, game loop
+    bank = stage.Bank.from_bmp16("ball.bmp")
+    # sets the background to image 0 in the bank
+    background = stage.Grid(bank, constants.SCREEN_GRID_X, constants.SCREEN_GRID_Y)
+
+    # sprites
+    sprites = []
+    computer_paddle = []
+    user_paddle = []
+    velocity = [1, 1]
+
+    ball = stage.Sprite(bank, 1, 80, 64)
+    sprites.append(ball)
+
+    paddle = stage.Bank.from_bmp16("paddle.bmp")
+    paddle_a = stage.Sprite(paddle, 10, 8, 60)
+    computer_paddle.append(paddle_a)
+    paddle_b = stage.Sprite(paddle, 10, 8, 70)
+    computer_paddle.append(paddle_b)
+    paddle_c = stage.Sprite(paddle, 10, 8, 80)
+    computer_paddle.append(paddle_c)
+
+    paddle_d = stage.Sprite(paddle, 144, 136, 60)
+    user_paddle.append(paddle_d)
+    paddle_e = stage.Sprite(paddle, 144, 136, 70)
+    user_paddle.append(paddle_e)
+    paddle_f = stage.Sprite(paddle, 144, 136, 80)
+    user_paddle.append(paddle_f)
+
+    # create a stage for the background to show up on
+    #   and set the frame rate to 60fps
+    game = stage.Stage(ugame.display, 60)
+    # set the layers, items show up in order
+    game.layers = computer_paddle + user_paddle + sprites + [background]
+    # render the background and inital location of sprite list
+    # most likely you will only render background once per scene
+    game.render_block()
     while True:
         # get user input
+        keys = ugame.buttons.get_pressed()
+        # print(keys)
+        if keys & ugame.K_UP:
+            # move the user paddle up
+            for a_single_paddle_piece in user_paddle:
+                a_single_paddle_piece.move(a_single_paddle_piece.x, a_single_paddle_piece.y - 1)
+            # check if top paddle peice off top of screen
+            if user_paddle[0].y < 0:
+                # move all the paddle peices back up
+                for a_single_paddle_piece in user_paddle:
+                    a_single_paddle_piece.move(a_single_paddle_piece.x, a_single_paddle_piece.y + 1)
+        if keys & ugame.K_DOWN:
+            # move the user paddle up
+            for a_single_paddle_piece in user_paddle:
+                a_single_paddle_piece.move(a_single_paddle_piece.x, a_single_paddle_piece.y + 1)
+            # check if bottom paddle peice off bottom of screen
+            if user_paddle[2].y > 112 :
+                # move all the paddle peices back up
+                for a_single_paddle_piece in user_paddle:
+                    a_single_paddle_piece.move(a_single_paddle_piece.x, a_single_paddle_piece.y - 1)
 
-        # update game logic
+        # move the ball
+        ball.move(ball.x + velocity[0], ball.y + velocity[1])
+
+        # check if touching top or bottom of screen
+        if not 0 < ball.x < 150:
+            velocity[0]= -velocity[0]
+        if not 0 < ball.y < 118:
+            velocity[1] = -velocity[1]
+        # check if touching a paddle
+        for ball in sprites :
+            if ball.x > 0:
+
 
         # redraw sprite list
-        pass # just a placeholder until you write the code
-
+        game.render_sprites(computer_paddle + user_paddle + sprites)
+        game.tick()  # wait until refresh rate finishes
 
 def game_over_scene(final_score):
     # this function is the game over scene
 
     # repeat forever, game loop
     while True:
-        # get user input
-
         # update game logic
 
         # redraw sprite list
