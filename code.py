@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# Created by: ????
-# Created on: ???? 2019
-# This file is the "????" game
+# Created by: Mariam Hemdan
+# Created on: 2020
+# This file is the "pong" game
 #   for CircuitPython
 
 import ugame
