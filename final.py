@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Created by: Mariam Hemdan
+# Created by: Mariam
 # Created on: 2020
 # This file is the "pong" game
 #   for CircuitPython
@@ -101,11 +101,6 @@ def mt_splash_scene():
     text1.text("MT Game Studios")
     text.append(text1)
 
-    text2 = stage.Text(width=29, height=14, font=None, palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
-    text2.move(35, 110)
-    text2.text("PRESS START")
-    text.append(text2)
-
     # get sound ready
     # follow this guide to convert your other sounds to something that will work
     #    https://learn.adafruit.com/microcontroller-compatible-audio-file-conversion
@@ -192,7 +187,7 @@ def main_menu_scene():
 
     text2 = stage.Text(width=29, height=14, font=None, palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
     text2.move(35, 110)
-    text2.text("PRESS START")
+    text2.text("PRESS SELECT")
     text.append(text2)
     # create a stage for the background to show up on
     #   and set the frame rate to 60fps
@@ -206,10 +201,13 @@ def main_menu_scene():
         # get user input
 
         # update game logic
-
+        keys = ugame.buttons.get_pressed()
         # Wait for 1 seconds
-        time.sleep(1.0)
-        game_scene()
+        if keys & ugame.K_SELECT!= 0:
+            key = 0
+            game_scene()
+
+
         # redraw sprite list
 
         pass # just a placeholder until you write the code
@@ -217,7 +215,6 @@ def main_menu_scene():
 
 def game_scene():
     # this function is the game scene
-    # repeat forever, game loop
     # repeat forever, game loop
     bank = stage.Bank.from_bmp16("ball.bmp")
     # sets the background to image 0 in the bank
@@ -280,31 +277,71 @@ def game_scene():
 
         # move the ball
         ball.move(ball.x + velocity[0], ball.y + velocity[1])
-
-        # check if touching top or bottom of screen
-        if not 0 < ball.x < 150:
+        # see the ball bounce
+        if not 0 < ball.x < 144:
             velocity[0]= -velocity[0]
-        if not 0 < ball.y < 118:
+        if not 0 < ball.y < 110:
             velocity[1] = -velocity[1]
-        # check if touching a paddle
-        for ball in sprites :
-            if ball.x > 0:
+
+        # move computer paddle
+        # move the 3 parts to be in the y value of the ball
+        computer_paddle[0].move(computer_paddle[1].x, ball.y-10)
+        computer_paddle[1].move(computer_paddle[1].x, ball.y)
+        computer_paddle[2].move(computer_paddle[1].x, ball.y+10)
 
 
+        # make the ball bounce if touch the paddles
+        if (ball.x > 120 and ball.x < 142 and ball.y < paddle_d.y + 20 and ball.y > paddle_d.y - 20):
+            velocity[0]= -velocity[0]
+        if (ball.x > 120 and ball.x < 142 and ball.y < paddle_e.y + 20 and ball.y > paddle_e.y - 20):
+            velocity[0]= -velocity[0]
+        if (ball.x > 120 and ball.x < 142 and ball.y < paddle_f.y + 20 and ball.y > paddle_f.y - 20):
+            velocity[0]= -velocity[0]
+        # bouncing the ball in computer paddle
+        if (ball.x > 15 and ball.x < 20 and ball.y < paddle_a.y + 20 and ball.y > paddle_a.y - 20):
+            velocity[0]= -velocity[0]
+        if (ball.x > 15 and ball.x < 20 and ball.y < paddle_b.y + 20 and ball.y > paddle_b.y - 20):
+            velocity[0]= -velocity[0]
+        if (ball.x > 15 and ball.x < 20 and ball.y < paddle_c.y + 20 and ball.y > paddle_c.y - 20):
+            velocity[0]= -velocity[0]
+        if computer_paddle == ball:
+            coin_sound = open("coin.wav", 'rb')
+            sound = ugame.audio
+            sound.stop()
+            sound.mute(False)
+            sound.play(coin_sound)
+        if user_paddle == ball:
+            coin_sound = open("coin.wav", 'rb')
+            sound = ugame.audio
+            sound.stop()
+            sound.mute(False)
+            sound.play(coin_sound)
         # redraw sprite list
         game.render_sprites(computer_paddle + user_paddle + sprites)
         game.tick()  # wait until refresh rate finishes
 
-def game_over_scene(final_score):
+def game_over_scene():
     # this function is the game over scene
 
     # repeat forever, game loop
     while True:
+        text = []
+        text1 = stage.Text(width=29, height=14, font=None, palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+        text1.move(60, 10)
+        text1.text("GAME OVER")
+        text.append(text1)
+
         # update game logic
+        keys = ugame.buttons.get_pressed()
+        # Wait for 1 seconds
+        if keys & ugame.K_SELECT!= 0:
+            key = 0
+            mt_splash_scene()
 
         # redraw sprite list
         pass # just a placeholder until you write the code
 
 
 if __name__ == "__main__":
+
     blank_white_reset_scene()

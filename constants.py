@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Created by: Mr. Coxall
+# Modified by: me
 # Created on: October 2019
 # This constants file is CircuitPython Stage game
 
@@ -10,6 +11,7 @@ SCREEN_Y = 128
 SCREEN_GRID_X = 16
 SCREEN_GRID_Y = 8
 SPRITE_SIZE = 16
+SPRITE_MOVEMENT_SPEED = 1
 OFF_TOP_SCREEN = -1 * SPRITE_SIZE
 OFF_BOTTOM_SCREEN = SCREEN_Y + SPRITE_SIZE
 
